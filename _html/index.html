@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R3ZONANCE - Optimal Anarchy</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div class="grid">
+        <header>
+            <div class="title-group">
+                <h1>R3ZONANCE</h1>
+                <p class="subtitle">by Optimal Anarchy</p>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="hero-text">
+                <h2 class="roboto-thin">For Music and Visual Artists. Your AI-powered sonic visualization environment</h2>
+                <p class="launch-text">Join the waitlist for exclusive first access.</p>
+                <div class="hero-cta">
+                    <a 
+                        href="#" 
+                        class="button primary"
+                        onclick="Tally.openPopup('3lVkNB', { width: 540 })"
+                    >
+                        Get Early Access →
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h3>How It Works</h3>
+            <div class="feature-grid">
+                <div class="feature">
+                    <span class="number">01</span>
+                    <h4>Drop Your Sound</h4>
+                    <p>Any audio becomes your canvas. Instant transformation. Zero technical skills needed.</p>
+                </div>
+                <div class="feature">
+                    <span class="number">02</span>
+                    <h4>Watch It Transform</h4>
+                    <p>AI-powered visuals. Hypnotic enviroments. Perfect for any platform.</p>
+                </div>
+                <div class="feature">
+                    <span class="number">03</span>
+                    <h4>Deploy & Share</h4>
+                    <p>Cross-platform exports. Built-in distribution tools.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq">
+            <h3>FAQ</h3>
+            <div class="faq-grid">
+                <details class="faq-item">
+                    <summary>What makes R3ZONANCE different?</summary>
+                    <div class="faq-content">
+                        Our AI-powered technology transforms any audio into mesmerizing visual content optimized for social platforms. No technical skills needed.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>How can I get early access?</summary>
+                    <div class="faq-content">
+                        Sign up for our waitlist to secure your spot. Early members will receive exclusive benefits, priority access, and special launch pricing.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>What platforms are supported?</summary>
+                    <div class="faq-content">
+                        We're optimizing for all major social platforms including TikTok, Instagram Reels, YouTube Shorts, and more. Direct sharing will be available at launch.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Will there be a free tier?</summary>
+                    <div class="faq-content">
+                        Yes! We'll offer a generous free tier to help creators get started. Early access members will receive additional benefits.
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary>What about copyright protection?</summary>
+                    <div class="faq-content">
+                        We're building advanced copyright detection and clearance tools to help keep your content safe and compliant.
+                    </div>
+                </details>
+            </div>
+        </section>
+    </div>
+
+    <div class="controls-container">
+        <!-- Mode buttons coming soon
+        <div class="mode-buttons">
+            <button class="mode-button active" data-mode="R1">R1</button>
+            <button class="mode-button" data-mode="R2">R2</button>
+            <button class="mode-button" data-mode="R3">R3</button>
+        </div>
+        -->
+        <div class="controls">
+            <div class="control">
+                <label>Wave Size</label>
+                <input type="range" id="waveSize" min="1" max="50" step="1" value="15">
+            </div>
+            <div class="control">
+                <label>Wave Speed</label>
+                <input type="range" id="waveSpeed" min="0" max="0.02" step="0.001" value="0.005">
+            </div>
+            <div class="control">
+                <label>Wave Height</label>
+                <input type="range" id="waveHeight" min="0" max="1" step="0.05" value="0.3">
+            </div>
+        </div>
+        <button class="minimize-button">
+            <svg width="12" height="8" viewBox="0 0 12 8">
+                <path d="M1 1l5 5 5-5" stroke="currentColor" fill="none" stroke-width="2"/>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // Single declaration of shared variables
+        let mouseX = 0;
+        let mouseY = 0;
+        let scrollPos = 0;
+        let targetScrollPos = 0;
+        let time = 0;
+        let currentCameraHeight = 50;
+        let targetCameraHeight = 50;
+        
+        // Add scroll handler
+        window.addEventListener('scroll', () => {
+            targetScrollPos = window.scrollY / window.innerHeight;
+            // Map scroll position to camera height (50 to -20)
+            targetCameraHeight = 50 - (window.scrollY * 0.05);
+        });
+        
+        // Three.js setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.insertBefore(renderer.domElement, document.body.firstChild);
+
+        // Parameters
+        const params = {
+            waveHeight: 0.3,
+            waveSpeed: 0.005,
+            waveSize: 15
+        };
+
+        // Create wavy grid
+        const segments = 150;
+        const geometry = new THREE.PlaneGeometry(400, 400, segments, segments);
+        const material = new THREE.MeshPhongMaterial({
+            color: 0xff3366,
+            wireframe: true,
+            specular: 0xffffff,
+            shininess: 100,
+            side: THREE.DoubleSide
+        });
+
+        const plane = new THREE.Mesh(geometry, material);
+        plane.rotation.x = Math.PI / 3;
+        plane.position.y = -20;
+        scene.add(plane);
+
+        // Add lights
+        const light = new THREE.PointLight(0xffffff, 2, 200);
+        light.position.set(0, 20, 50);
+        scene.add(light);
+
+        const ambientLight = new THREE.AmbientLight(0xff6b6b, 0.5);
+        scene.add(ambientLight);
+
+        // Update OrbitControls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enableZoom = false;
+        controls.enablePan = false;
+        controls.rotateSpeed = 0.5;
+        controls.enableRotate = true;
+
+        // Optional: Add rotation limits if desired
+        controls.minPolarAngle = Math.PI * 0.25; // Limit vertical rotation
+        controls.maxPolarAngle = Math.PI * 0.75;
+
+        controls.update();
+        
+        // Make sure renderer.domElement can receive pointer events
+        renderer.domElement.style.pointerEvents = 'auto';
+        renderer.domElement.style.position = 'fixed';
+        renderer.domElement.style.top = '0';
+        renderer.domElement.style.left = '0';
+        renderer.domElement.style.zIndex = '-1';
+
+        // Initial camera position
+        camera.position.set(30, 50, 60);
+        camera.lookAt(0, 0, 0);
+
+        // Add event listeners for wave controls
+        document.getElementById('waveSize').addEventListener('input', (e) => {
+            params.waveSize = parseFloat(e.target.value);
+        });
+
+        document.getElementById('waveSpeed').addEventListener('input', (e) => {
+            params.waveSpeed = parseFloat(e.target.value);
+        });
+
+        document.getElementById('waveHeight').addEventListener('input', (e) => {
+            params.waveHeight = parseFloat(e.target.value);
+        });
+
+        // Add minimize button handler
+        document.querySelector('.minimize-button').addEventListener('click', () => {
+            document.querySelector('.controls-container').classList.toggle('minimized');
+        });
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            time += params.waveSpeed;
+            
+            // Smooth camera height transition
+            currentCameraHeight += (targetCameraHeight - currentCameraHeight) * 0.05;
+            camera.position.y = currentCameraHeight;
+            
+            // Update wave pattern
+            const positions = geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+                const x = positions[i];
+                const y = positions[i + 1];
+                positions[i + 2] = 
+                    Math.sin(x / params.waveSize + time) * params.waveHeight * 20 + 
+                    Math.cos(y / params.waveSize + time) * params.waveHeight * 20;
+            }
+            geometry.attributes.position.needsUpdate = true;
+            
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="copyright">© 2024 R3ZONANCE by Optimal Anarchy</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Replace Typeform script with Tally script -->
+    <script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>
