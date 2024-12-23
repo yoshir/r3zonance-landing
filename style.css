@@ -732,14 +732,14 @@ canvas {
 /* Add Roboto Thin class */
 .roboto-thin {
     font-family: "Roboto", serif;
-    font-weight: 100;
+    font-weight: 300;
     font-style: normal;
 }
 
 .hero-text h2 {
     font-size: calc(var(--grid-unit) * 8);
     line-height: 1.2;
-    font-weight: 100 !important;
+    font-weight: 300 !important;
     margin-bottom: calc(var(--grid-unit) * 4);
     letter-spacing: -1px;
     opacity: 0.95;
@@ -747,7 +747,7 @@ canvas {
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
-    font-variation-settings: "wght" 100;
+    font-variation-settings: "wght" 300;
     text-rendering: optimizeLegibility;
 } 
 
